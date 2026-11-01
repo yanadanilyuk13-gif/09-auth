@@ -49,17 +49,19 @@ export async function proxy(request: NextRequest) {
     for (const cookieString of newCookies) {
       const parsedCookie = parseSetCookie(cookieString);
 
-      if (parsedCookie && parsedCookie.value !== undefined) {
-        response.cookies.set(parsedCookie.name, parsedCookie.value, {
-          path: parsedCookie.path,
-          domain: parsedCookie.domain,
-          maxAge: parsedCookie.maxAge,
-          expires: parsedCookie.expires,
-          httpOnly: parsedCookie.httpOnly,
-          secure: parsedCookie.secure,
-          sameSite: parsedCookie.sameSite,
-        });
+      if (!parsedCookie || parsedCookie.value === undefined) {
+        continue;
       }
+
+      response.cookies.set(parsedCookie.name, parsedCookie.value, {
+        path: parsedCookie.path,
+        domain: parsedCookie.domain,
+        maxAge: parsedCookie.maxAge,
+        expires: parsedCookie.expires,
+        httpOnly: parsedCookie.httpOnly,
+        secure: parsedCookie.secure,
+        sameSite: parsedCookie.sameSite,
+      });
     }
   }
 
