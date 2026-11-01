@@ -29,16 +29,6 @@ export async function proxy(request: NextRequest) {
       const setCookie = session.headers['set-cookie'];
 
       newCookies = Array.isArray(setCookie) ? setCookie : setCookie ? [setCookie] : [];
-
-      if (isAuthenticated) {
-        for (const cookieString of newCookies) {
-          const parsed = parseSetCookie(cookieString);
-
-          if (parsed.name && parsed.value) {
-            request.cookies.set(parsed.name, parsed.value);
-          }
-        }
-      }
     } catch {
       isAuthenticated = false;
     }
@@ -51,11 +41,7 @@ export async function proxy(request: NextRequest) {
   } else if (isPublicRoute && isAuthenticated) {
     response = NextResponse.redirect(new URL('/', request.url));
   } else {
-    response = NextResponse.next({
-      request: {
-        headers: request.headers,
-      },
-    });
+    response = NextResponse.next();
   }
 
   if (isAuthenticated) {
