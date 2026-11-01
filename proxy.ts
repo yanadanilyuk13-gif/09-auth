@@ -24,6 +24,7 @@ export async function proxy(request: NextRequest) {
   if (!accessToken && refreshToken) {
     try {
       const session = await checkSession(request.headers.get('cookie') ?? '');
+
       isAuthenticated = session.data.success;
 
       const setCookie = session.headers['set-cookie'];
@@ -46,7 +47,19 @@ export async function proxy(request: NextRequest) {
 
   if (isAuthenticated) {
     for (const cookieString of newCookies) {
-      response.headers.append('set-cookie', cookieString);
+      const parsedCookie = parseSetCookie(cookieString);
+
+      if (parsedCookie) {
+        response.cookies.set(parsedCookie.name, parsedCookie.value, {
+          path: parsedCookie.path,
+          domain: parsedCookie.domain,
+          maxAge: parsedCookie.maxAge,
+          expires: parsedCookie.expires,
+          httpOnly: parsedCookie.httpOnly,
+          secure: parsedCookie.secure,
+          sameSite: parsedCookie.sameSite,
+        });
+      }
     }
   }
 
