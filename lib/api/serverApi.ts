@@ -46,16 +46,16 @@ interface SessionResponse {
   success: boolean;
 }
 
-export async function checkSession(): Promise<SessionResponse> {
-  const cookieStore = await cookies();
+export async function checkSession(cookieHeader?: string) {
+  const cookieStore = cookieHeader === undefined ? await cookies() : null;
 
   const response = await nextServer.get<SessionResponse>('/auth/session', {
     headers: {
-      Cookie: cookieStore.toString(),
+      Cookie: cookieHeader ?? cookieStore?.toString() ?? '',
     },
   });
 
-  return response.data;
+  return response;
 }
 
 export async function getMe(): Promise<User> {

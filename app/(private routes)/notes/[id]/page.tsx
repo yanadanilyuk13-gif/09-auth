@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { connection } from 'next/server';
 
 import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query';
 
@@ -35,8 +34,6 @@ export async function generateMetadata({ params }: NoteDetailsProps): Promise<Me
 }
 
 async function NoteDetailsContent({ params }: NoteDetailsProps) {
-  await connection();
-
   const { id } = await params;
 
   const queryClient = new QueryClient();
