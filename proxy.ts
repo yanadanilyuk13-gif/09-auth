@@ -49,7 +49,7 @@ export async function proxy(request: NextRequest) {
     for (const cookieString of newCookies) {
       const parsedCookie = parseSetCookie(cookieString);
 
-      if (parsedCookie) {
+      if (parsedCookie && parsedCookie.value !== undefined) {
         response.cookies.set(parsedCookie.name, parsedCookie.value, {
           path: parsedCookie.path,
           domain: parsedCookie.domain,
